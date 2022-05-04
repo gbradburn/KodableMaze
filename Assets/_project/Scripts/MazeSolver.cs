@@ -41,7 +41,6 @@ public class MazeSolver
 
         // Mark that we've been here
         _traversedTiles.Add(position);
-
         if ((position.x > 0) && SolveRecursively(new Vector2Int(position.x - 1, position.y)))
         { 
             _correctPath.Add(position);

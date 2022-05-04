@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,14 +7,15 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] GameObject _playerPrefab;
     [SerializeField] Maze _maze;
+    [SerializeField] Player _player;
     [SerializeField] Button _solveButton;
     [SerializeField] GameObject _solvedPanel;
     [SerializeField] GameObject _errorPanel;
 
-    Player _player;
-
     private void OnEnable()
     {
+        _player.gameObject.SetActive(false);
+        _player.transform.position = Vector3.zero;
         _solvedPanel.SetActive(false);
         _errorPanel.SetActive(false);
     }
@@ -34,10 +34,10 @@ public class GameManager : MonoBehaviour
 
     private void AnimatePlayer(List<Vector2Int> solution)
     {
-        GameObject playerGo = Instantiate(_playerPrefab, _maze.StartTile.transform.position, Quaternion.identity);
-        _player = playerGo.GetComponent<Player>();
+        _player.transform.position = _maze.StartTile.transform.position;
         _player.Init(_maze.BuildPathForSolution(solution));
         _player.EndOfMazeReached += Player_EndOfMazeReached;
+        _player.gameObject.SetActive(true);
     }
 
     private void DisplayErrorPanel()

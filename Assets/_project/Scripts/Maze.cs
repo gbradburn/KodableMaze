@@ -5,7 +5,7 @@ using static MazeTile;
 
 public class Maze : MonoBehaviour
 {
-    [SerializeField] TextAsset _asciiMaze;
+    [SerializeField] List<TextAsset> _asciiMazes;
     [SerializeField] List<GameObject> _mapTilePrefabs;
     [SerializeField] Vector3Int _upperLeftCorner = new Vector3Int(-11, -5, 1);
 
@@ -20,15 +20,21 @@ public class Maze : MonoBehaviour
     public MazeTile StartTile => TileAt(StartPosition);
 
     private List<List<MazeTile>> _mazeTiles;
+    private static int _mazeIndex = 0;
 
     private void Awake()
     {
-        LoadMaze();
+        LoadNextMaze();
+        _mazeIndex++;
+        if (_mazeIndex >= _asciiMazes.Count)
+        {
+            _mazeIndex = 0;
+        }
     }
 
-    private void LoadMaze()
+    private void LoadNextMaze()
     {
-        StringReader reader = new StringReader(_asciiMaze.text);
+        StringReader reader = new StringReader(_asciiMazes[_mazeIndex].text);
         List<List<MazeTile.TileType>> tiles = new List<List<MazeTile.TileType>>();
         string row = reader.ReadLine();
         int y = 0;
