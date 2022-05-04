@@ -38,13 +38,15 @@ public class Maze : MonoBehaviour
         List<List<MazeTile.TileType>> tiles = new List<List<MazeTile.TileType>>();
         string row = reader.ReadLine();
         int y = 0;
+        bool doubleSpace = false;
         while (row != null)
         {
             List<MazeTile.TileType> tileRow = new List<MazeTile.TileType>();
             for (int x = 0; x < row.Length; ++x) 
-            { 
-                TileType tileType = GetTileType(x, y, row);
+            {
+                TileType tileType = GetTileType(x, y, row, ref doubleSpace);
                 tileRow.Add(tileType);
+                if (doubleSpace) ++x;
             }
             tiles.Add(tileRow);
             row = reader.ReadLine();
@@ -68,19 +70,35 @@ public class Maze : MonoBehaviour
         }
     }
 
-    private TileType GetTileType(int x, int y, string row)
+    private TileType GetTileType(int x, int y, string row, ref bool doubleSpace)
     {
         if (x == 0 && y == 1)
         {
+            doubleSpace = false;
             return MazeTile.TileType.Start;
         }
 
+        // First check for double space cells
+        if (!doubleSpace && x < row.Length - 1)
+        {
+            string s = row.Substring(x, 2);
+            if (s == "  ")
+            {
+                doubleSpace = true;
+                return TileType.Floor;
+            }
+            else if (s == "--")
+            {
+                doubleSpace = true;
+                return TileType.Wall;
+            }
+        }
+        doubleSpace = false;
         return row[x] switch
         {
-            '|' => TileType.Wall,
-            '-' => TileType.Wall,
+            ' ' => TileType.Floor,
             '+' => TileType.WallCorner,
-            ' ' => TileType.Floor
+            _ => TileType.Wall
         };
     }
 
